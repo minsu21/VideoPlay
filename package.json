@@ -1,0 +1,21 @@
+{
+  "name": "movieplay",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server/index.ts",
+    "server": "nodemon server/index.ts",
+    "client": ""
+  },
+  "author": "minsu",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^6.0.2",
+    "typescript": "^4.2.4"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "mongoose": "^5.12.4"
+  }
+}
