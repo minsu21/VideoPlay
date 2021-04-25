@@ -1,9 +1,10 @@
 import { NextFunction } from 'express';
 import * as mongoose from 'mongoose';
+import { Schema, Document, Model } from 'mongoose';
 import * as bcrypt from 'bcrypt';
 import { sign, verify } from 'jsonwebtoken';
 
-export interface IUser extends mongoose.Document {
+interface IUser {
   name: string,
   email: string,
   password: string,
@@ -11,12 +12,19 @@ export interface IUser extends mongoose.Document {
   image: string,
   token: string,
   tokenExp: string,
+};
+
+interface IUserDocument extends IUser, Document {
   comparePassword(password: string, next: (err: Error | null, same: boolean | null) => void): void,
   generateToken(next: (err: Error, userInfo: IUser) => void),
 };
 
+interface IUserModel extends Model<IUserDocument> {
+  findByToken(token: {}, next: (err: Error, userInfo: IUser) => void),
+};
+
 const saltRounds = 10;
-const userSchema = new mongoose.Schema({
+const userSchema: Schema<IUserDocument> = new Schema({
   name: {
     type:String,
     maxlength: 50
@@ -43,7 +51,7 @@ const userSchema = new mongoose.Schema({
   }
 });
 
-userSchema.pre<IUser>('save', function(this: IUser, next: NextFunction) {
+userSchema.pre<IUserDocument>('save', function(this: IUserDocument, next: NextFunction) {
   const user = this;
 
   if (user.isModified('password')) {
@@ -61,14 +69,14 @@ userSchema.pre<IUser>('save', function(this: IUser, next: NextFunction) {
   };
 });
 
-userSchema.methods.comparePassword = function(this: IUser, password, next) {
+userSchema.methods.comparePassword = function(this: IUserDocument, password, next) {
   bcrypt.compare(password, this.password, function (err, isMatch) {
     if (err) return next(err);
     next(null, isMatch)
   });
 };
 
-userSchema.methods.generateToken = function(this: IUser, next) {
+userSchema.methods.generateToken = function(this: IUserDocument, next) {
   const user = this;
   const token = sign(user._id.toHexString(), 'jwt');
 
@@ -77,7 +85,18 @@ userSchema.methods.generateToken = function(this: IUser, next) {
     if (err) return next(err);
     next(null, user);
   });
-
 };
 
-export const User = mongoose.model<IUser>('User', userSchema);
+userSchema.statics.findByToken = function(token, next) {
+  const user = this;
+
+  verify(token, 'jwt', function(err, decoded) {
+    user.findOne({'_id': decoded, 'token': token}, function (err, user) {
+      if (err) return next(err);
+      next(null, user);
+    });
+  });
+};
+
+const User = mongoose.model<IUserDocument, IUserModel>('User', userSchema);
+export default User;

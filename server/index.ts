@@ -2,9 +2,10 @@ import * as express from 'express';
 import { Request, Response } from 'express';
 import * as bodyParser from 'body-parser';
 import * as cookieParser from 'cookie-parser';
-import { users } from './routes/users';
-import { User, IUser } from './model/user';
+// import { users } from './routes/users';
+import User from './model/user';
 import { NativeError } from 'mongoose';
+import { auth } from './middleware/auth';
 
 const config = require('./config/key');
 
@@ -18,7 +19,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cookieParser());
 
-app.use('/api/users', users);
+// app.use('/api/users', users);
 // app.use('/api/video', require('./routes/video'));
 // app.use('/api/subscribe', require('./routes/subscribe'));
 // app.use('/api/comment', require('./routes/comment'));
@@ -26,7 +27,7 @@ app.use('/api/users', users);
 // app.use('/uploads', express.static('uploads'));
 
 
-app.post('/register', (req: Request, res: Response) => {
+app.post('/api/user/register', (req: Request, res: Response) => {
   const user = new User(req.body);
 
   user.save((err, userInfo) => {
@@ -37,9 +38,9 @@ app.post('/register', (req: Request, res: Response) => {
   });
 });
 
-app.post('/login', (req: Request, res: Response) => {
+app.post('/api/user/login', (req: Request, res: Response) => {
   
-  User.findOne({ email: req.body.email }, (err: NativeError, userInfo: IUser) => {
+  User.findOne({ email: req.body.email }, (err: NativeError, userInfo) => {
     if (!userInfo) {
       return res.json({
         login: false,
@@ -62,6 +63,18 @@ app.post('/login', (req: Request, res: Response) => {
     });
   });
 
+});
+
+app.get('/api/user/auth', auth, (req: any, res: Response) => {
+  res.status(200).json({
+    _id: req.user._id,
+    isAdmin: req.user.role === 0 ? false : true,
+    isAuth: true,
+    email: req.user.email,
+    name: req.user.name,
+    role: req.user.role,
+    image: req.user.image
+  });
 });
 
 const port = process.env.PORT || 8000;
