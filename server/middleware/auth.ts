@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import User from '../model/user';
 
-export const auth = (req: any, res: Response, next) => {
+export const auth = (req: any, res: Response, next: any) => {
 
   // 클라이언트 쿠키에서 토큰을 가져온다.
   let token = req.cookies.x_auth;

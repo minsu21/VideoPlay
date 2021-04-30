@@ -77,6 +77,17 @@ app.get('/api/user/auth', auth, (req: any, res: Response) => {
   });
 });
 
+app.get('/api/user/logout', auth, (req: any, res: Response) => {
+  
+  User.findOneAndUpdate({ _id: req.user._id}, { token: ''}, {rawResult: true}, (err, user) => {
+    if (err) return res.json({success: false, err});
+    return res.status(200).send({
+      success: true
+    });
+  });
+
+});
+
 const port = process.env.PORT || 8000;
 
 app.listen(port, () => {
