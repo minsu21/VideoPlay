@@ -26,6 +26,8 @@ app.use(cookieParser());
 // app.use('/api/like', require('./routes/like'));
 // app.use('/uploads', express.static('uploads'));
 
+app.get('/api/test', (req: Request, res: Response) => res.send('Express Test'));
+
 
 app.post('/api/user/register', (req: Request, res: Response) => {
   const user = new User(req.body);
