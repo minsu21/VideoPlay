@@ -3,4 +3,6 @@
 server/config/dev.js
 server/config/dev.ts
 
+package-lock.json
+
 .gitignore
