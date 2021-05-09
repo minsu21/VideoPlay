@@ -16,8 +16,6 @@ export default function (SpecificComponent: React.ComponentType<any>, option?: b
 
     useEffect(() => {
       dispatch(auth()).then(rep => {
-        console.log('auth rep', rep);
-
         if (!rep.payload.isAuth) {
           if (option) {
             props.history.push('/login');
