@@ -20,7 +20,7 @@ const NavBar = () => {
   };
 
   return (
-    <nav className='menu' style={{ position: 'fixed', zIndex: 1, width: '100%' }}>
+    <nav className='menu' style={{ position: 'fixed', zIndex: 1, width: '100%', overflow: 'hidden' }}>
       <div className='menu__logo'>
         <a href='/'><img src={Logo} alt='Logo' style={{ width: '32px', marginTop: '-5px' }} /></a>
       </div>
