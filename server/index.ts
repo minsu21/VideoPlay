@@ -2,32 +2,41 @@ import * as express from 'express';
 import { Request, Response } from 'express';
 import * as bodyParser from 'body-parser';
 import * as cookieParser from 'cookie-parser';
-// import { users } from './routes/users';
 import User from './model/user';
 import { NativeError } from 'mongoose';
 import { auth } from './middleware/auth';
+import * as path from 'path';
 
+const multer = require('multer');
 const config = require('./config/key');
-
 const mongoose = require('mongoose');
 const connect = mongoose.connect(config.mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('MongoDB Connected...'))
   .catch(err => console.log(err));
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+      cb(null, 'upload/')
+  },
+  filename: (req, file, cb) => {
+      cb(null, `${Date.now()}_${file.originalname}`)
+  },
+  // fileFilter: (req, file, cb) => {
+  //     const ext = path.extname(file.originalname)
+  //     if (ext !== '.mp4') {
+  //         return cb(null, false);
+  //     };
+  //     cb(null, true);
+  // }
+});
+const upload = multer({storage: storage}).single('file');
 
 const app: express.Application = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cookieParser());
 
-// app.use('/api/users', users);
-// app.use('/api/video', require('./routes/video'));
-// app.use('/api/subscribe', require('./routes/subscribe'));
-// app.use('/api/comment', require('./routes/comment'));
-// app.use('/api/like', require('./routes/like'));
-// app.use('/uploads', express.static('uploads'));
-
 app.get('/api/test', (req: Request, res: Response) => res.send('Express Test'));
-
 
 app.post('/api/user/register', (req: Request, res: Response) => {
   const user = new User(req.body);
@@ -41,7 +50,7 @@ app.post('/api/user/register', (req: Request, res: Response) => {
 });
 
 app.post('/api/user/login', (req: Request, res: Response) => {
-  
+
   User.findOne({ email: req.body.email }, (err: NativeError, userInfo) => {
     if (!userInfo) {
       return res.json({
@@ -86,6 +95,16 @@ app.get('/api/user/logout', auth, (req: any, res: Response) => {
     return res.status(200).send({
       success: true
     });
+  });
+
+});
+
+app.post('/api/video/upload', (req: any, res: any) => {
+  upload(req, res, err => {
+    if (err) {
+      return res.json({success: false, err});
+    }
+    return res.json({success: true, url: res.req.file.path, fileName: res.req.file.filename });
   });
 
 });
