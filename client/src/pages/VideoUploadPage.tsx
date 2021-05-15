@@ -39,7 +39,6 @@ const VideoUploadPage = (props: any) => {
 
     await axios.post('/api/video/upload', formData, config).then((response) => {
       if (response.data.success) {
-        console.log('upload', response.data);
 
         const variable = {
           url: response.data.url,
@@ -96,7 +95,7 @@ const VideoUploadPage = (props: any) => {
   return (
     <div style={{maxWidth: '700px', margin: '2rem auto'}}>
       <div style={{textAlign: 'center', marginBottom: '2rem'}}>
-        <Title level={2}>Upload</Title>
+        <Title level={2}>동영상 업로드</Title>
       </div>
 
       <Form>

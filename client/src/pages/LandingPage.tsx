@@ -20,22 +20,12 @@ const LandingPage = (props: any) => {
     });
   }, []);
 
-  const onClickHandler = () => {
-    axios.get('/api/user/logout').then(rep => {
-      if (rep.data.success) {
-        props.history.push('/login');
-      } else {
-        alert('로그아웃 실패');
-      }
-    });
-  };
-
   const cards = () => {
     return video.map((data: any, index) => {
       const minutes = Math.floor(data.duration / 60);
       const seconds = Math.floor(data.duration - minutes * 60);
       return (
-        <Col lg={6} md={8} xs={24}>
+        <Col key={index} lg={6} md={8} xs={24}>
           <a href={`/video/${data._id}`}>
             <div style={{position: 'relative'}}> 
               <img style={{width: '100%'}} src={`http://localhost:8000/${data.thumbnail}`} alt='thumbnail' />

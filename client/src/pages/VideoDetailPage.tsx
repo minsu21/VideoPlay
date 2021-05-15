@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { withRouter } from 'react-router-dom';
 import { Card, Col, Row, List, Avatar, Typography } from 'antd';
+import SideVideo from '../components/Sections/SideVideo';
 
 const VideoDetailPage = (props: any) => {
   const videoId = props.match.params.videoId;
@@ -32,9 +33,6 @@ const VideoDetailPage = (props: any) => {
   }, []);
 
   return (
-    // <div style={{width: '85%', margin: '3rem auto'}}>
-    //   VideoDetailPage
-    // </div>
     <Row gutter={[16, 16]}>
       <Col lg={18} xs={24}>
         <div style={{width: '100%', padding: '3rem 4rem'}}>
@@ -53,7 +51,7 @@ const VideoDetailPage = (props: any) => {
         </div>
       </Col>
       <Col lg={6} xs={24}>
-        list
+        <SideVideo />
       </Col>
 
     </Row>
