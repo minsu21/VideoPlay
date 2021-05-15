@@ -5,7 +5,7 @@ import RightMenu from './Sections/RightMenu';
 import { Drawer, Button } from 'antd';
 import Icon  from '@ant-design/icons';
 import './Sections/NavBar.css';
-const Logo = './assets/images/logo.png';
+const Logo = '../assets/images/logo.png';
 
 const NavBar = () => {
 

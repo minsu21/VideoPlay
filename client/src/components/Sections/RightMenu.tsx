@@ -4,7 +4,7 @@ import axios from 'axios';
 import { USER_SERVER } from '../../config';
 import { withRouter } from 'react-router-dom';
 import { useSelector } from "react-redux";
-const Upload = './assets/images/upload.png';
+const Upload = '../assets/images/upload.png';
 
 interface RootState {
   user: any
@@ -40,7 +40,7 @@ function RightMenu(props: any) {
     return (
       <Menu mode={props.mode}>
         <Menu.Item key="create">
-          <a href="/video/upload"><img src={Upload} width="16px" alt="Upload" /></a>
+          <a href="/video/upload"><img src={Upload} width="32px" alt="Upload" /></a>
         </Menu.Item>
         <Menu.Item key="logout">
           <a onClick={logoutHandler}>Logout</a>
