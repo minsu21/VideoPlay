@@ -8,7 +8,6 @@ import './Sections/NavBar.css';
 const Logo = '../assets/images/logo.png';
 
 const NavBar = () => {
-
   const [visible, setVisible] = useState(false)
 
   const showDrawer = () => {

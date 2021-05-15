@@ -1,4 +1,3 @@
-import { NextFunction } from 'express';
 import * as mongoose from 'mongoose';
 import { Schema, Document, Model } from 'mongoose';
 

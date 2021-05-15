@@ -2,11 +2,13 @@ import * as express from 'express';
 import { Request, Response } from 'express';
 import * as bodyParser from 'body-parser';
 import * as cookieParser from 'cookie-parser';
-import User from './model/user';
-import Video from './model/video';
 import { NativeError } from 'mongoose';
 import { auth } from './middleware/auth';
 import * as path from 'path';
+
+import User from './model/user';
+import Video from './model/video';
+import Subscriber from './model/subscriber';
 
 const multer = require('multer');
 const ffmpeg = require('fluent-ffmpeg');
@@ -151,23 +153,72 @@ app.post('/api/video/write', (req: any, res: any) => {
 
   video.save((err, doc) => {
     if (err) return res.json({success: false, err});
-    res.status(200).json({success: true});
+    return res.status(200).json({success: true});
   });
 });
 
 app.get('/api/video/list', (req: any, res: any) => {
   Video.find().populate('writer').exec((err, videos) => {
     if (err) return res.status(400).send(err);
-
-    res.status(200).json({success: true, videos});
+    return res.status(200).json({success: true, videos});
   });
 });
 
 app.post('/api/video/detail', (req: any, res: any) => {
   Video.findOne({'_id': req.body.videoId}).populate('writer').exec((err, video) => {
     if (err) return res.status(400).send(err);
-
     return res.status(200).json({success: true, video});
+  });
+});
+
+app.post('/api/video/subscription', (req: any, res: any) => {
+  Subscriber.find({userFrom: req.body.userFrom}).exec((err, subscriberInfo) => {
+    if (err) return res.status(400).send(err);
+
+    const subscribedUser = [];
+    subscriberInfo.map((data, index) => {
+      subscribedUser.push((data as any).userTo);
+    });
+
+    Video.find({writer: { $in: subscribedUser }}).populate('writer').exec((err, videos) => {
+      if (err) return res.status(400).send(err);
+      res.status(200).json({success: true, videos});
+    });
+  });
+
+});
+
+app.post('/api/subscribe/count', (req: any, res: any) => {
+  Subscriber.find({'userTo': req.body.userTo}).exec((err, subscribe) => {
+    if (err) return res.status(400).send(err);
+    return res.status(200).json({success: true, subscribeCount: subscribe.length});
+  });
+});
+
+app.post('/api/subscribe/subscribed', (req: any, res: any) => {
+  Subscriber.find({'userTo': req.body.userTo, 'userFrom': req.body.userFrom}).exec((err, subscribe) => {
+    if (err) return res.status(400).send(err);
+    let result = false;
+    if (subscribe.length !== 0) {
+      result = true;
+    }
+    return res.status(200).json({success: true, subscribed: result});
+  });
+});
+
+app.post('/api/subscribe/unSubscribe', (req: any, res: any) => {
+  Subscriber.findOneAndDelete({'userTo': req.body.userTo, 'userFrom': req.body.userFrom}).exec((err, doc) => {
+    if (err) return res.status(400).json({success: false, err});
+    return res.status(200).json({success: true, doc});
+  });
+});
+
+app.post('/api/subscribe/subscribe', (req: any, res: any) => {
+  const subscribe = new Subscriber(req.body);
+
+  subscribe.save((err, doc) => {
+    if (err) return res.status(400).json({success: false, err});
+    return res.status(200).json({success: true});
   });
 });
 

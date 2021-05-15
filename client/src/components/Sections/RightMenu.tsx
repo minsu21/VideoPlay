@@ -11,7 +11,6 @@ interface RootState {
 };
 
 function RightMenu(props: any) {
-  // const user = useSelector(state => state.user)
   const selectUser = (state: RootState) => state.user;
   const user = useSelector(selectUser);
 

@@ -4,13 +4,17 @@ import { withRouter } from 'react-router-dom';
 import { Card, Col, Row, Avatar, Typography } from 'antd';
 import moment from 'moment';
 
-const LandingPage = (props: any) => {
+const SubscriptionPage = (props: any) => {
   const {Title} = Typography;
   const {Meta} = Card;
   const [video, setVideo] = useState([]);
   
   useEffect(() => {
-    axios.get('/api/video/list').then(response => {
+    const variable = {
+      userFrom: localStorage.getItem('userId')
+    };
+
+    axios.post('/api/video/subscription', variable).then(response => {
       if (response.data.success) {
         setVideo(response.data.videos);
       } else {
@@ -49,7 +53,7 @@ const LandingPage = (props: any) => {
 
   return (
     <div style={{width: '85%', margin: '3rem auto'}}>
-      <Title level={2}>최근 영상</Title>
+      <Title level={2}>구독영상</Title>
       <hr />
       <Row gutter={[32, 16]}>
         {cards()}
@@ -58,4 +62,4 @@ const LandingPage = (props: any) => {
   );
 };
 
-export default withRouter(LandingPage);
+export default withRouter(SubscriptionPage);
