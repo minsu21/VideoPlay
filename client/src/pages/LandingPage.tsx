@@ -49,7 +49,7 @@ const LandingPage = (props: any) => {
 
   return (
     <div style={{width: '85%', margin: '3rem auto'}}>
-      <Title level={2}>최근 영상</Title>
+      <Title level={2}>최근영상</Title>
       <hr />
       <Row gutter={[32, 16]}>
         {cards()}

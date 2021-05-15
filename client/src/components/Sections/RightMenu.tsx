@@ -49,4 +49,4 @@ function RightMenu(props: any) {
   };
 };
 
-export default withRouter(RightMenu);
+export default RightMenu;
