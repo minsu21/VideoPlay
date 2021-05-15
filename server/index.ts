@@ -147,14 +147,28 @@ app.post('/api/video/thumbnail', (req: any, res: any) => {
 });
 
 app.post('/api/video/write', (req: any, res: any) => {
-
   const video = new Video(req.body);
 
   video.save((err, doc) => {
     if (err) return res.json({success: false, err});
     res.status(200).json({success: true});
   });
+});
 
+app.get('/api/video/list', (req: any, res: any) => {
+  Video.find().populate('writer').exec((err, videos) => {
+    if (err) return res.status(400).send(err);
+
+    res.status(200).json({success: true, videos});
+  });
+});
+
+app.post('/api/video/detail', (req: any, res: any) => {
+  Video.findOne({'_id': req.body.videoId}).populate('writer').exec((err, video) => {
+    if (err) return res.status(400).send(err);
+
+    return res.status(200).json({success: true, video});
+  });
 });
 
 const port = process.env.PORT || 8000;

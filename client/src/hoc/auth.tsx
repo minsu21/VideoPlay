@@ -15,16 +15,17 @@ export default function (SpecificComponent: React.ComponentType<any>, option?: b
     const dispatch = useDispatch();
 
     useEffect(() => {
-      dispatch(auth()).then(rep => {
-        if (!rep.payload.isAuth) {
+      dispatch(auth()).then(response => {
+
+        if (!response.payload.isAuth) {
           if (option) {
             props.history.push('/login');
           };
         } else {
-          if (adminRoute && !rep.payload.isAdmin) {
+          if (adminRoute && !response.payload.isAdmin) {
             props.history.push('/');
           } else {
-            if (!option) {
+            if (option === false) {
               props.history.push('/');
             };
           };
