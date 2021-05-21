@@ -2,13 +2,8 @@ import * as mongoose from 'mongoose';
 import { Schema, Document, Model } from 'mongoose';
 
 interface ISubscriber {
-  name: string,
-  email: string,
-  password: string,
-  role: number,
-  image: string,
-  token: string,
-  tokenExp: string,
+  userTo: string,
+  userFrom: string,
 };
 
 interface ISubscriberDocument extends ISubscriber, Document {

@@ -4,6 +4,7 @@ import { withRouter } from 'react-router-dom';
 import { Card, Col, Row, List, Avatar, Typography } from 'antd';
 import SideVideo from '../components/Sections/SideVideo';
 import Subscribe from '../components/Subscribe';
+import Comment from '../components/Comment';
 
 const VideoDetailPage = (props: any) => {
   const videoId = props.match.params.videoId;
@@ -16,6 +17,11 @@ const VideoDetailPage = (props: any) => {
     },
     description: ''
   });
+  const [comment, setComment] = useState([]);
+
+  const refreshComment = (newComment: any) => {
+    setComment(comment.concat(newComment));
+  };
 
   useEffect(() => {
     const variable = {
@@ -27,6 +33,16 @@ const VideoDetailPage = (props: any) => {
         setVideo(response.data.video);
       } else {
         alert('비디오 정보를 가져오지 못했습니다.');
+      }
+    });
+
+    axios.post('/api/comment/getComments', variable).then(response => {
+      console.log('comment', comment);
+
+      if (response.data.success) {
+        setComment(response.data.comment);
+      } else {
+        alert('댓글 정보를 가져오지 못했습니다.');
       }
     });
 
@@ -53,6 +69,8 @@ const VideoDetailPage = (props: any) => {
             </List.Item>
   
             {/* 댓글 */}
+            <Comment refresh={refreshComment} comments={comment} videoId={videoId} />
+
   
           </div>
         </Col>

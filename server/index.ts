@@ -9,6 +9,7 @@ import * as path from 'path';
 import User from './model/user';
 import Video from './model/video';
 import Subscriber from './model/subscriber';
+import Comment from './model/comment';
 
 const multer = require('multer');
 const ffmpeg = require('fluent-ffmpeg');
@@ -221,6 +222,28 @@ app.post('/api/subscribe/subscribe', (req: any, res: any) => {
     return res.status(200).json({success: true});
   });
 });
+
+app.post('/api/comment/save', (req: any, res: any) => {
+  const comment = new Comment(req.body);
+  
+  comment.save((err, comment) => {
+    if (err) return res.status(400).json({success: false, err});
+    Comment.find({'_id': comment._id}).populate('writer').exec((err, result) => {
+      if (err) return res.status(400).json({success: false, err});
+      return res.status(200).json({success: true, result});
+    });
+  });
+});
+
+app.post('/api/comment/getComments', (req: any, res: any) => {
+
+  Comment.find({'videoId': req.body.videoId}).populate('writer').exec((err, comment) => {
+    if (err) return res.status(400).send(err)
+    res.status(200).json({ success: true, comment })
+  });
+
+});
+
 
 const port = process.env.PORT || 8000;
 
