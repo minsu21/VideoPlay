@@ -10,6 +10,8 @@ import User from './model/user';
 import Video from './model/video';
 import Subscriber from './model/subscriber';
 import Comment from './model/comment';
+import Like from './model/like';
+import DisLike from './model/dislike';
 
 const multer = require('multer');
 const ffmpeg = require('fluent-ffmpeg');
@@ -242,6 +244,122 @@ app.post('/api/comment/getComments', (req: any, res: any) => {
     res.status(200).json({ success: true, comment })
   });
 
+});
+
+app.post('/api/like/get', (req: any, res: any) => {
+
+  let variable = {};
+
+  if (req.body.videoId) {
+    variable = { videoId: req.body.videoId };
+  } else {
+    variable = { commentId: req.body.commentId };
+  };
+
+  Like.find(variable).exec((err, likes) => {
+    if (err) return res.status(400).send(err);
+    res.status(200).json({ success: true, likes });
+  });
+
+});
+
+app.post('/api/like/upLike', (req: any, res: any) => {
+
+  let variable = {};
+
+  if (req.body.videoId) {
+    variable = { videoId: req.body.videoId, userId: req.body.userId };
+  } else {
+    variable = { commentId: req.body.commentId, userId: req.body.userId };
+  };
+
+  const like = new Like(variable);
+
+  like.save((err, likeResult) => {
+    if (err) return res.status(400).json({success: false, err});
+
+    DisLike.findOneAndDelete(variable).exec((err, disLikeResult) => {
+      if (err) return res.status(400).json({success: false, err});
+      res.status(200).json({success: true});
+    });
+  });
+
+});
+
+app.post('/api/like/unLike', (req: any, res: any) => {
+
+  let variable = {};
+
+  if (req.body.videoId) {
+    variable = { videoId: req.body.videoId, userId: req.body.userId };
+  } else {
+    variable = { commentId: req.body.commentId, userId: req.body.userId };
+  };
+
+  Like.findOneAndDelete(variable).exec((err, result) => {
+    if (err) return res.status(400).json({ success: false, err});
+    res.status(200).json({success: true});
+  });
+  
+});
+
+
+app.post('/api/dislike/get', (req: any, res: any) => {
+
+  let variable = {};
+
+  if (req.body.videoId) {
+    variable = { videoId: req.body.videoId };
+  } else {
+    variable = { commentId: req.body.commentId };
+  };
+
+  DisLike.find(variable).exec((err, dislikes) => {
+    if (err) return res.status(400).send(err);
+    res.status(200).json({ success: true, dislikes });
+  });
+
+});
+
+
+app.post('/api/like/upDislike', (req: any, res: any) => {
+
+  let variable = {};
+
+  if (req.body.videoId) {
+    variable = { videoId: req.body.videoId, userId: req.body.userId };
+  } else {
+    variable = { commentId: req.body.commentId, userId: req.body.userId };
+  };
+
+  const dislike = new DisLike(variable);
+
+  dislike.save((err, dislikeResult) => {
+    if (err) return res.status(400).json({success: false, err});
+
+    Like.findOneAndDelete(variable).exec((err, disLikeResult) => {
+      if (err) return res.status(400).json({success: false, err});
+      res.status(200).json({success: true});
+    });
+  });
+
+});
+
+app.post('/api/like/unDislike', (req: any, res: any) => {
+
+  let variable = {};
+
+  if (req.body.videoId) {
+    variable = { videoId: req.body.videoId, userId: req.body.userId };
+  } else {
+    variable = { commentId: req.body.commentId, userId: req.body.userId };
+  };
+
+  DisLike.findOneAndDelete(variable).exec((err, result) => {
+    if (err) return res.status(400).json({ success: false, err});
+    res.status(200).json({success: true});
+  });
+  
 });
 
 

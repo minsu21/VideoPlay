@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { Comment, Avatar, Input, Button } from 'antd';
+import LikeDislikes from '../components/LikeDislikes';
 
 interface RootState {
   user: any
@@ -23,6 +24,7 @@ const SingleComment = (props: any) => {
   };
 
   const actions = [
+    <LikeDislikes comment userId={localStorage.getItem('userId')} commentId={props.comment._id} />,
     <span onClick={onClickReplayOpen}  key='comment-basic-replay-to'>댓글쓰기</span>
   ];
 

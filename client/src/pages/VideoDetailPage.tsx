@@ -5,6 +5,7 @@ import { Card, Col, Row, List, Avatar, Typography } from 'antd';
 import SideVideo from '../components/Sections/SideVideo';
 import Subscribe from '../components/Subscribe';
 import Comment from '../components/Comment';
+import LikeDislikes from '../components/LikeDislikes';
 
 const VideoDetailPage = (props: any) => {
   const videoId = props.match.params.videoId;
@@ -37,7 +38,6 @@ const VideoDetailPage = (props: any) => {
     });
 
     axios.post('/api/comment/getComments', variable).then(response => {
-      console.log('comment', comment);
 
       if (response.data.success) {
         setComment(response.data.comment);
@@ -59,7 +59,7 @@ const VideoDetailPage = (props: any) => {
             <video style={{width: '100%'}} src={`http://localhost:8000/${video.filePath}`} controls />
   
             <List.Item
-              actions={[isSubscribeButton]}
+              actions={[<LikeDislikes video userId={localStorage.getItem('userId')} videoId={videoId} />, isSubscribeButton]}
             >
               <List.Item.Meta
                 avatar={<Avatar src={video.writer.image} />}
